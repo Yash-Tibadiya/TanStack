@@ -1,19 +1,46 @@
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      await fetch("https://dummyjson.com/products")
-        .then((res) => res.json())
-        .then((data) => setProducts(data.products))
+      setIsLoading(true);
+      setError(null);
+      try {
+        await fetch("https://dummyjson.com/products")
+          .then((res) => res.json())
+          .then((data) => setProducts(data.products))
+          .finally(() => setIsLoading(false));
+        setIsLoading(false);
+      } catch (error) {
+        setError(error);
+        setIsLoading(false);
+      }
     };
     fetchProducts();
   }, []);
 
-  console.log(products);
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoaderCircle className="animate-spin" size={48} color="gray" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen items-center justify-center text-2xl font-bold text-red-500">
+        Error: {error.message}
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white">
@@ -33,10 +60,10 @@ const Products = () => {
               <div className="mt-4 flex justify-between">
                 <div>
                   <h3 className="text-sm text-gray-700">
-                    <a>
+                    <Link to={`/products/${product.id}`}>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {product.title}
-                    </a>
+                    </Link>
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">
                     {product.category}
