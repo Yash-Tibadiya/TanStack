@@ -1,30 +1,24 @@
-import { LoaderCircle } from "lucide-react";
-import { useState } from "react";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LoaderCircle } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+
+const fetchProducts = async () => {
+  const response = await fetch("https://dummyjson.com/products").then((res) =>
+    res.json()
+  );
+  return response.products;
+};
 
 const Products = () => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        await fetch("https://dummyjson.com/products")
-          .then((res) => res.json())
-          .then((data) => setProducts(data.products))
-          .finally(() => setIsLoading(false));
-        setIsLoading(false);
-      } catch (error) {
-        setError(error);
-        setIsLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  const {
+    isLoading,
+    error,
+    data: products,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: fetchProducts,
+    staleTime: 10000, // 10 seconds
+  });
 
   if (isLoading) {
     return (
@@ -50,7 +44,7 @@ const Products = () => {
         </h2>
 
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {products.map((product) => (
+          {products?.map((product) => (
             <div key={product.id} className="group relative">
               <img
                 alt={product.title}

@@ -1,7 +1,7 @@
-import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LoaderCircle } from "lucide-react";
 
 const Products = () => {
   const [products, setProducts] = useState([]);

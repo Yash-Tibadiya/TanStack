@@ -1,5 +1,5 @@
 {
-  "name": "react-query-crash-course",
+  "name": "tanstack-query",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.80.10",
+    "@tanstack/react-query-devtools": "^5.80.10",
     "localforage": "^1.10.0",
     "lucide-react": "^0.518.0",
     "match-sorter": "^6.3.1",
@@ -19,6 +21,7 @@
     "sort-by": "^1.2.0"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^5.78.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
