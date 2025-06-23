@@ -12,6 +12,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.80.10",
     "@tanstack/react-query-devtools": "^5.80.10",
+    "axios": "^1.10.0",
     "localforage": "^1.10.0",
     "lucide-react": "^0.518.0",
     "match-sorter": "^6.3.1",
