@@ -1,5 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
+import debounce from "lodash.debounce";
 
 function Products() {
   // const [limit] = useState(8);
@@ -12,6 +13,8 @@ function Products() {
 
   const limit = parseInt(searchParams.get("limit") || 8);
   const skip = parseInt(searchParams.get("skip") || 0);
+  const q = searchParams.get("q") || "";
+  const category = searchParams.get("category") || "";
 
   const { data: categories } = useQuery({
     queryKey: ["categories"],
@@ -23,11 +26,13 @@ function Products() {
   });
 
   const { data: products } = useQuery({
-    queryKey: ["products", limit, skip],
+    queryKey: ["products", limit, skip, q, category],
     queryFn: async () => {
-      const data = await fetch(
-        `https://dummyjson.com/products?limit=${limit}&skip=${skip}`
-      ).then((res) => res.json());
+      let url = `https://dummyjson.com/products/search?limit=${limit}&skip=${skip}&q=${q}`;
+      if (category) {
+        url = `https://dummyjson.com/products/category/${category}?limit=${limit}&skip=${skip}`;
+      }
+      const data = await fetch(url).then((res) => res.json());
       return data.products;
     },
     placeholderData: keepPreviousData,
@@ -56,14 +61,30 @@ function Products() {
           <div>
             <div className="relative mt-2 rounded-md flex items-center gap-8 mb-4">
               <input
-                onChange={() => {}}
+                onChange={debounce((e) => {
+                  setSearchParams((prev) => {
+                    prev.set("q", e.target.value);
+                    prev.set("skip", 0); // Reset skip when searching
+                    return prev;
+                  });
+                }, 1000)}
                 type="text"
                 name="price"
                 id="price"
                 className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="IPhone"
               />
-              <select className="border p-2" onChange={() => {}}>
+              <select
+                className="border p-2"
+                onChange={(e) => {
+                  setSearchParams((prev) => {
+                    prev.set("skip", 0);
+                    prev.set("q", "");
+                    prev.set("category", e.target.value);
+                    return prev;
+                  });
+                }}
+              >
                 <option value="">Select category</option>
                 {categories?.map((category) => (
                   <option key={category.slug} value={category.slug}>
