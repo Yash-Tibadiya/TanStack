@@ -32,10 +32,10 @@ function Products() {
       if (category) {
         url = `https://dummyjson.com/products/category/${category}?limit=${limit}&skip=${skip}`;
       }
-      const data = await fetch(url).then((res) => res.json());
-      return data.products;
+      return await fetch(url).then((res) => res.json());
     },
     placeholderData: keepPreviousData,
+    staleTime: 1000 * 60, // 1 minute
   });
 
   const handleMove = (moveCount) => {
@@ -65,6 +65,7 @@ function Products() {
                   setSearchParams((prev) => {
                     prev.set("q", e.target.value);
                     prev.set("skip", 0); // Reset skip when searching
+                    prev.set("category", "");
                     return prev;
                   });
                 }, 1000)}
@@ -96,7 +97,7 @@ function Products() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {products?.map((product) => (
+            {products?.products?.map((product) => (
               <div key={product.id} className="group relative">
                 <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-64">
                   <img
@@ -127,7 +128,8 @@ function Products() {
 
           <div className="flex gap-2 mt-12">
             <button
-              className="bg-purple-500 px-4 py-1 text-white rounded cursor-pointer"
+              disabled={skip < limit}
+              className="bg-purple-500 px-4 py-1 text-white rounded cursor-pointer disabled:opacity-50"
               onClick={() => {
                 handleMove(-limit);
               }}
@@ -135,7 +137,8 @@ function Products() {
               Prev
             </button>
             <button
-              className="bg-purple-500 px-4 py-1 text-white rounded cursor-pointer"
+              disabled={skip + limit >= products?.total}
+              className="bg-purple-500 px-4 py-1 text-white rounded cursor-pointer disabled:opacity-50"
               onClick={() => {
                 handleMove(limit);
               }}
