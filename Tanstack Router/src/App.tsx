@@ -1,9 +1,10 @@
+import { RouterProvider } from "@tanstack/react-router";
+import router from "./router";
+
 function App() {
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        <h1 className="text-3xl font-bold">Home</h1>
-      </div>
+      <RouterProvider router={router} />
     </>
   );
 }
