@@ -8,9 +8,9 @@ const Navbar = () => {
       </Link>
       <Link
         to="/users"
-        // search={{
-        //   page: 1,
-        // }}
+        search={{
+          page: 1,
+        }}
         activeProps={{ className: "font-bold" }}
       >
         Users
